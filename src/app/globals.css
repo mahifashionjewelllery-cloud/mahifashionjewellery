@@ -1,0 +1,64 @@
+@import "tailwindcss";
+@import "./marquee.css";
+
+:root {
+  /* Luxury Dark Green + Gold Theme */
+  --background: #022c22;
+  /* emerald-950 */
+  --foreground: #f0fdf4;
+  /* emerald-50 */
+
+  --primary: #047857;
+  /* emerald-700 */
+  --primary-foreground: #ffffff;
+
+  --accent: #d4af37;
+  /* Metallic Gold */
+  --accent-foreground: #022c22;
+
+  --muted: #064e3b;
+  /* emerald-900 */
+  --muted-foreground: #a7f3d0;
+  /* emerald-200 */
+
+  --card: #064e3b;
+  /* emerald-900 */
+  --card-foreground: #ecfdf5;
+  /* emerald-50 */
+
+  --border: #065f46;
+  /* emerald-800 */
+  --input: #065f46;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-lato);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
