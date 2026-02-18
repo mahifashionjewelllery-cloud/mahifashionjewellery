@@ -150,7 +150,7 @@ export default function MetalRatesPage() {
                                         type="number"
                                         id={`mobile-rate-${rate.id}`}
                                         defaultValue={rate.rate_per_gram}
-                                        className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-emerald-500 focus:ring-emerald-500 text-base py-2" // text-base prevents iOS zoom
+                                        className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-emerald-500 focus:ring-emerald-500 text-base text-gray-900 py-2" // text-base prevents iOS zoom
                                         placeholder="0.00"
                                     />
                                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -217,7 +217,7 @@ export default function MetalRatesPage() {
                                                 type="number"
                                                 id={`rate-${rate.id}`}
                                                 defaultValue={rate.rate_per_gram}
-                                                className="block w-full rounded-md border-gray-300 pl-6 pr-12 focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5"
+                                                className="block w-full rounded-md border-gray-300 pl-6 pr-12 focus:border-emerald-500 focus:ring-emerald-500 text-sm text-gray-900 py-1.5"
                                             />
                                             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                                 <span className="text-gray-400 sm:text-xs">/g</span>
@@ -267,7 +267,7 @@ export default function MetalRatesPage() {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Metal Type</label>
                                 <select
-                                    className="w-full rounded-md border border-gray-300 p-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full rounded-md border border-gray-300 p-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900"
                                     value={newRateData.metal_type}
                                     onChange={(e) => setNewRateData({ ...newRateData, metal_type: e.target.value })}
                                 >
@@ -280,7 +280,7 @@ export default function MetalRatesPage() {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full rounded-md border border-gray-300 p-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full rounded-md border border-gray-300 p-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900"
                                     placeholder="e.g. 24K"
                                     value={newRateData.purity}
                                     onChange={(e) => setNewRateData({ ...newRateData, purity: e.target.value })}
@@ -291,7 +291,7 @@ export default function MetalRatesPage() {
                                 <input
                                     type="number"
                                     required
-                                    className="w-full rounded-md border border-gray-300 p-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full rounded-md border border-gray-300 p-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900"
                                     placeholder="e.g. 7200"
                                     value={newRateData.rate_per_gram}
                                     onChange={(e) => setNewRateData({ ...newRateData, rate_per_gram: e.target.value })}

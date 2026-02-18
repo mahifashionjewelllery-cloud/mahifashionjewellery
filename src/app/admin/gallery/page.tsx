@@ -3,14 +3,19 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
-import { Loader2, Upload, Trash2 } from 'lucide-react'
+import { Loader2, Upload, Trash2, AlertTriangle } from 'lucide-react'
 import Image from 'next/image'
 import { useToast } from '@/context/ToastContext'
+import { Modal } from '@/components/ui/Modal'
 
 export default function GalleryManagementPage() {
     const [loading, setLoading] = useState(false)
     const [images, setImages] = useState<string[]>([])
     const [uploading, setUploading] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; index: number | null }>({
+        isOpen: false,
+        index: null
+    })
     const { showToast } = useToast()
 
     useEffect(() => {
@@ -63,13 +68,20 @@ export default function GalleryManagementPage() {
         }
     }
 
-    const removeImage = async (index: number) => {
-        if (!confirm('Are you sure you want to delete this image?')) return
+    const requestDelete = (index: number) => {
+        setDeleteConfirmation({ isOpen: true, index })
+    }
+
+    const confirmDelete = async () => {
+        const index = deleteConfirmation.index
+        if (index === null) return
 
         const imageToDelete = images[index]
         const newImages = images.filter((_, i) => i !== index)
 
         try {
+            setDeleteConfirmation({ isOpen: false, index: null })
+
             // 1. Delete file from storage
             const deleteResponse = await fetch('/api/gallery/upload', {
                 method: 'DELETE',
@@ -167,8 +179,8 @@ export default function GalleryManagementPage() {
                                     className="object-cover"
                                 />
                                 <button
-                                    onClick={() => removeImage(index)}
-                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition-colors z-10"
+                                    onClick={() => requestDelete(index)}
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition-colors z-10 opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
                                     title="Delete Image"
                                 >
                                     <Trash2 className="h-4 w-4" />
@@ -183,6 +195,53 @@ export default function GalleryManagementPage() {
                         {images.length} / 8 images • Recommended: 4-8 images for best display
                     </p>
                 </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deleteConfirmation.isOpen && deleteConfirmation.index !== null && (
+                <Modal
+                    isOpen={deleteConfirmation.isOpen}
+                    onClose={() => setDeleteConfirmation({ isOpen: false, index: null })}
+                    title="Remove Image?"
+                >
+                    <div className="flex flex-col items-center text-center space-y-4">
+                        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
+                            <AlertTriangle className="h-8 w-8 text-red-500" />
+                        </div>
+
+                        <div className="space-y-2">
+                            <p className="text-gray-600">
+                                Are you sure you want to remove this image from the gallery?
+                                This action cannot be undone.
+                            </p>
+                        </div>
+
+                        <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 mt-4">
+                            <Image
+                                src={images[deleteConfirmation.index]}
+                                alt="Image to delete"
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+
+                        <div className="flex gap-3 w-full pt-4">
+                            <Button
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => setDeleteConfirmation({ isOpen: false, index: null })}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                                onClick={confirmDelete}
+                            >
+                                Delete Image
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
             )}
         </div>
     )
