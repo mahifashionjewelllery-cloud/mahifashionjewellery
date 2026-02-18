@@ -17,6 +17,7 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
             const { data: { session } } = await supabase.auth.getSession()
 
             if (!session) {
+                console.log('Redirecting to /login - No session')
                 router.push('/login')
                 return
             }
@@ -28,7 +29,10 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
                 .eq('id', session.user.id)
                 .single()
 
+            console.log('Admin Check:', { userId: session.user.id, profile, error })
+
             if (error || profile?.role !== 'admin') {
+                console.log('Redirecting to / - Not admin', { error, role: profile?.role })
                 router.push('/')
                 return
             }
