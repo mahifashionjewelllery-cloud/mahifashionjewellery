@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './ui/Button'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export function Navbar() {
     const router = useRouter()
@@ -48,9 +49,19 @@ export function Navbar() {
 
                     {/* Logo */}
                     <div className="flex-shrink-0">
-                        <Link href="/" className="flex flex-col items-start leading-none group">
-                            <span className="font-serif text-2xl sm:text-3xl text-accent tracking-widest uppercase font-bold">Mahi</span>
-                            <span className="font-sans text-[0.6rem] sm:text-xs text-emerald-100 tracking-[0.2em] sm:tracking-[0.3em] uppercase group-hover:text-white transition-colors">Fashion Jewellery</span>
+                        <Link href="/" className="flex items-center gap-3 group">
+                            <Image
+                                src="/mahilogo.png"
+                                alt="Mahi Fashion Jewellery"
+                                width={50}
+                                height={50}
+                                className="h-12 w-auto object-contain"
+                                priority
+                            />
+                            <div className="flex flex-col items-start leading-none">
+                                <span className="font-serif text-2xl sm:text-3xl text-accent tracking-widest uppercase font-bold">Mahi</span>
+                                <span className="font-sans text-[0.6rem] sm:text-xs text-emerald-100 tracking-[0.2em] sm:tracking-[0.3em] uppercase group-hover:text-white transition-colors">Fashion Jewellery</span>
+                            </div>
                         </Link>
                     </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Facebook, Instagram, Twitter, Linkedin, Youtube, Mail, Globe } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase'
@@ -43,8 +44,17 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                     {/* Brand */}
                     <div className="col-span-1 md:col-span-1">
-                        <Link href="/" className="font-serif text-2xl text-accent tracking-widest uppercase block mb-6">
-                            Mahi Fashion Jewellery
+                        <Link href="/" className="flex items-center gap-3 mb-6 group">
+                            <Image
+                                src="/mahilogo.png"
+                                alt="Mahi Fashion Jewellery"
+                                width={50}
+                                height={50}
+                                className="h-12 w-auto object-contain"
+                            />
+                            <span className="font-serif text-2xl text-accent tracking-widest uppercase group-hover:text-white transition-colors">
+                                Mahi Fashion Jewellery
+                            </span>
                         </Link>
                         <p className="text-emerald-200/80 text-sm leading-relaxed mb-6">
                             Crafting timeless elegance in gold and silver. Each piece tells a story of heritage, purity, and unmatched artistry.

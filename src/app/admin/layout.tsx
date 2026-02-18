@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminAuthGuard } from '@/components/AdminAuthGuard'
 import { Menu } from 'lucide-react'
+import Image from 'next/image'
 
 export default function AdminLayout({
     children,
@@ -17,7 +18,16 @@ export default function AdminLayout({
             <div className="min-h-screen bg-gray-100">
                 {/* Mobile Header */}
                 <div className="md:hidden bg-emerald-950 text-white p-4 flex items-center justify-between sticky top-0 z-30 shadow-md">
-                    <span className="font-serif text-lg tracking-widest uppercase text-accent">Admin Panel</span>
+                    <div className="flex items-center gap-2">
+                        <Image
+                            src="/mahilogo.png"
+                            alt="Mahi Admin"
+                            width={32}
+                            height={32}
+                            className="h-8 w-auto object-contain bg-white/10 rounded p-0.5"
+                        />
+                        <span className="font-serif text-lg tracking-widest uppercase text-accent">Admin Panel</span>
+                    </div>
                     <button onClick={() => setSidebarOpen(true)} className="p-1 rounded-md hover:bg-emerald-900 transition-colors">
                         <Menu className="h-6 w-6 text-emerald-100" />
                     </button>

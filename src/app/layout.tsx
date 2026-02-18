@@ -22,6 +22,9 @@ const lato = Lato({
 export const metadata: Metadata = {
   title: 'Mahi Fashion Jewellery | Exquisite Gold & Silver',
   description: 'Premium gold and silver jewellery for the modern connoisseur.',
+  icons: {
+    icon: '/mahilogo.png',
+  },
 }
 
 export default function RootLayout({

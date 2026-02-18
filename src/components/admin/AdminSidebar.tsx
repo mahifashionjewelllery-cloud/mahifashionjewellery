@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, ShoppingBag, ShoppingCart, TrendingUp, Settings, LogOut, Users, Image as ImageIcon, LayoutList, Share2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -42,7 +43,16 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             )}>
                 {/* Logo & Close Button */}
                 <div className="flex items-center justify-between h-16 px-4 bg-emerald-950 border-b border-emerald-900">
-                    <span className="font-serif text-xl text-accent tracking-widest uppercase">Admin Panel</span>
+                    <div className="flex items-center gap-3">
+                        <Image
+                            src="/mahilogo.png"
+                            alt="Mahi Admin"
+                            width={40}
+                            height={40}
+                            className="h-8 w-auto object-contain bg-white/10 rounded p-1"
+                        />
+                        <span className="font-serif text-xl text-accent tracking-widest uppercase">Admin Panel</span>
+                    </div>
                     <button
                         onClick={onClose}
                         className="md:hidden text-emerald-200 hover:text-white"
