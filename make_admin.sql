@@ -1,11 +1,11 @@
--- ⚠️ UPDATED SCRIPT: Ensure "Rajeesh R" is Admin (ID: c12f0626...)
+-- ⚠️ UPDATED SCRIPT: Ensure "Ratheesh R" is Admin (ID: c12f0626...)
 -- I removed the "email" column from the check because it exists in auth.users, not public.profiles.
 
 -- 1. Insert Profile if it doesn't exist
 INSERT INTO public.profiles (id, full_name, role)
 VALUES (
     'c12f0626-25c5-4ad9-a473-8599840d13c0', 
-    'Rajeesh R', 
+    'Ratheesh R', 
     'admin'
 )
 ON CONFLICT (id) 

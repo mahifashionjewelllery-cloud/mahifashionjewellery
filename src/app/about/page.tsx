@@ -49,12 +49,12 @@ export default function AboutPage() {
                         <div className="relative rounded-lg overflow-hidden shadow-xl group">
                             <img
                                 src="/ownerpic.jpeg"
-                                alt="Rajeesh R - Owner of Mahi Fashion Jewellery"
+                                alt="Ratheesh R - Owner of Mahi Fashion Jewellery"
                                 className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-emerald-950/90 to-transparent p-6 pt-20">
                                 <p className="text-emerald-200 text-sm font-medium tracking-wider uppercase mb-1">Owner</p>
-                                <h3 className="text-white font-serif text-2xl">Rajeesh R</h3>
+                                <h3 className="text-white font-serif text-2xl">Ratheesh R</h3>
                             </div>
                         </div>
                     </div>

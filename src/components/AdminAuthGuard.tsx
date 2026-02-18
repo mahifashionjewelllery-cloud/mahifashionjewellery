@@ -10,38 +10,60 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
+        let mounted = true
+
         const checkAuth = async () => {
-            const supabase = createClient()
+            try {
+                const supabase = createClient()
 
-            // Check if user is logged in
-            const { data: { session } } = await supabase.auth.getSession()
+                // Check if user is logged in
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
-            if (!session) {
-                console.log('Redirecting to /login - No session')
-                router.push('/login')
-                return
+                if (sessionError || !session) {
+                    console.log('Redirecting to /login - No session')
+                    if (mounted) {
+                        setIsLoading(false) // Stop loading before redirect
+                        router.push('/login')
+                    }
+                    return
+                }
+
+                // Check if user has admin role
+                const { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', session.user.id)
+                    .single()
+
+                console.log('Admin Check:', { userId: session.user.id, profile, error })
+
+                if (error || profile?.role !== 'admin') {
+                    console.log('Redirecting to / - Not admin', { error, role: profile?.role })
+                    if (mounted) {
+                        setIsLoading(false) // Stop loading before redirect
+                        router.push('/')
+                    }
+                    return
+                }
+
+                if (mounted) {
+                    setIsAuthorized(true)
+                    setIsLoading(false)
+                }
+            } catch (err) {
+                console.error('Auth check failed:', err)
+                if (mounted) {
+                    setIsLoading(false)
+                    router.push('/')
+                }
             }
-
-            // Check if user has admin role
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', session.user.id)
-                .single()
-
-            console.log('Admin Check:', { userId: session.user.id, profile, error })
-
-            if (error || profile?.role !== 'admin') {
-                console.log('Redirecting to / - Not admin', { error, role: profile?.role })
-                router.push('/')
-                return
-            }
-
-            setIsAuthorized(true)
-            setIsLoading(false)
         }
 
         checkAuth()
+
+        return () => {
+            mounted = false
+        }
     }, [router])
 
     if (isLoading) {
