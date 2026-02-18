@@ -119,10 +119,69 @@ export default function MetalRatesPage() {
                         <TrendingUp className="text-accent mr-3 h-6 w-6" />
                         <h2 className="text-lg font-medium text-white">Live Rates Configuration</h2>
                     </div>
-                    <span className="text-xs text-emerald-200/60 font-mono">Last Updated: {new Date().toLocaleTimeString()}</span>
+                    <span className="text-xs text-emerald-200/60 font-mono hidden sm:inline">Last Updated: {new Date().toLocaleTimeString()}</span>
                 </div>
 
-                <div className="p-0 overflow-x-auto">
+                {/* Mobile View (Cards) */}
+                <div className="block md:hidden p-4 space-y-4">
+                    {rates.map((rate) => (
+                        <div key={rate.id} className="bg-white border rounded-lg shadow-sm p-4 space-y-3">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="font-medium text-gray-900 capitalize">{rate.metal_type}</h3>
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800 mt-1">
+                                        {rate.purity}
+                                    </span>
+                                </div>
+                                <div className="text-xs text-gray-500 font-mono">
+                                    {new Date(rate.updated_at).toLocaleDateString()}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label htmlFor={`mobile-rate-${rate.id}`} className="block text-xs font-medium text-gray-500 mb-1">
+                                    Current Rate (₹/g)
+                                </label>
+                                <div className="relative rounded-md shadow-sm">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <span className="text-gray-500 text-sm">₹</span>
+                                    </div>
+                                    <input
+                                        type="number"
+                                        id={`mobile-rate-${rate.id}`}
+                                        defaultValue={rate.rate_per_gram}
+                                        className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-emerald-500 focus:ring-emerald-500 text-base py-2" // text-base prevents iOS zoom
+                                        placeholder="0.00"
+                                    />
+                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                        <span className="text-gray-400 text-sm">/g</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Button
+                                size="sm"
+                                className="w-full"
+                                onClick={() => {
+                                    const input = document.getElementById(`mobile-rate-${rate.id}`) as HTMLInputElement
+                                    handleUpdate(rate.id, Number(input.value))
+                                }}
+                                disabled={updating === rate.id}
+                            >
+                                {updating === rate.id ? <Loader2 className="animate-spin h-3 w-3 mr-2" /> : null}
+                                {updating === rate.id ? 'Updating...' : 'Update Rate'}
+                            </Button>
+                        </div>
+                    ))}
+                    {rates.length === 0 && (
+                        <div className="text-center py-8 text-gray-500 text-sm">
+                            No rates found. Add a new rate to get started.
+                        </div>
+                    )}
+                </div>
+
+                {/* Desktop View (Table) */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>

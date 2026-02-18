@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
-import { Loader2, Upload, X } from 'lucide-react'
+import { Loader2, Upload, Trash2 } from 'lucide-react'
 import Image from 'next/image'
+import { useToast } from '@/context/ToastContext'
 
 export default function GalleryManagementPage() {
     const [loading, setLoading] = useState(false)
     const [images, setImages] = useState<string[]>([])
     const [uploading, setUploading] = useState(false)
+    const { showToast } = useToast()
 
     useEffect(() => {
         loadGalleryImages()
@@ -22,6 +24,7 @@ export default function GalleryManagementPage() {
             setImages(data.images || [])
         } catch (error) {
             console.error('Error loading gallery:', error)
+            showToast('Failed to load gallery images', 'error')
         }
     }
 
@@ -51,18 +54,41 @@ export default function GalleryManagementPage() {
             // Save list to database
             await saveGalleryImages(newImages)
             setImages(newImages)
+            showToast('Image uploaded successfully', 'success')
         } catch (error: any) {
             console.error('Error uploading image:', error)
-            alert('Failed to upload image: ' + error.message)
+            showToast('Failed to upload image: ' + error.message, 'error')
         } finally {
             setUploading(false)
         }
     }
 
     const removeImage = async (index: number) => {
+        if (!confirm('Are you sure you want to delete this image?')) return
+
+        const imageToDelete = images[index]
         const newImages = images.filter((_, i) => i !== index)
-        await saveGalleryImages(newImages)
-        setImages(newImages)
+
+        try {
+            // 1. Delete file from storage
+            const deleteResponse = await fetch('/api/gallery/upload', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: imageToDelete })
+            })
+
+            if (!deleteResponse.ok) {
+                console.warn('Failed to delete file from storage, but proceeding to remove from list')
+            }
+
+            // 2. Update list in database
+            await saveGalleryImages(newImages)
+            setImages(newImages)
+            showToast('Image removed successfully', 'success')
+        } catch (error) {
+            console.error('Error removing image:', error)
+            showToast('Failed to remove image', 'error')
+        }
     }
 
     const saveGalleryImages = async (imageUrls: string[]) => {
@@ -80,7 +106,7 @@ export default function GalleryManagementPage() {
             }
         } catch (error: any) {
             console.error('Error saving gallery images:', error)
-            alert('Failed to save gallery images: ' + error.message)
+            showToast('Failed to save gallery images: ' + error.message, 'error')
             throw error
         }
     }
@@ -142,9 +168,10 @@ export default function GalleryManagementPage() {
                                 />
                                 <button
                                     onClick={() => removeImage(index)}
-                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-600"
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition-colors z-10"
+                                    title="Delete Image"
                                 >
-                                    <X className="h-4 w-4" />
+                                    <Trash2 className="h-4 w-4" />
                                 </button>
                                 <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
                                     Image {index + 1}
