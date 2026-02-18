@@ -7,10 +7,12 @@ import { Product } from '@/types'
 import { Button } from '@/components/ui/Button'
 import { formatCurrency } from '@/lib/utils'
 import { createClient } from '@/lib/supabase'
+import { useToast } from '@/context/ToastContext'
 
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
+    const { showToast } = useToast()
 
     useEffect(() => {
         fetchProducts()
@@ -54,9 +56,10 @@ export default function AdminProductsPage() {
 
                 // Refresh list
                 setProducts(products.filter(p => p.id !== id))
+                showToast('Product deleted successfully', 'success')
             } catch (error: any) {
                 console.error('Error deleting product:', error)
-                alert('Failed to delete product: ' + error.message)
+                showToast('Failed to delete product: ' + error.message, 'error')
             }
         }
     }

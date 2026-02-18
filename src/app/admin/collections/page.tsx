@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Plus, Edit, Trash2, Loader2, Link as LinkIcon, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import Image from 'next/image'
+import { useToast } from '@/context/ToastContext'
 
 interface Collection {
     id: string
@@ -21,6 +22,7 @@ export default function AdminCollectionsPage() {
     const [collections, setCollections] = useState<Collection[]>([])
     const [loading, setLoading] = useState(true)
     const router = useRouter()
+    const { showToast } = useToast()
 
     useEffect(() => {
         fetchCollections()
@@ -54,9 +56,10 @@ export default function AdminCollectionsPage() {
 
                 if (error) throw error
                 setCollections(collections.filter(c => c.id !== id))
+                showToast('Collection deleted successfully', 'success')
             } catch (error: any) {
                 console.error('Error deleting collection:', error)
-                alert('Failed to delete collection')
+                showToast('Failed to delete collection', 'error')
             }
         }
     }

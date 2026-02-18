@@ -4,10 +4,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { ProductForm, ProductFormData } from '@/components/admin/ProductForm'
+import { useToast } from '@/context/ToastContext'
 
 export default function NewProductPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const { showToast } = useToast()
 
     const uploadImages = async (images: File[]) => {
         const supabase = createClient()
@@ -73,11 +75,12 @@ export default function NewProductPage() {
                 }
             }
 
+            showToast('Product created successfully', 'success')
             router.push('/admin/products')
             router.refresh()
         } catch (error: any) {
             console.error('Error creating product:', error)
-            alert('Failed to create product: ' + error.message)
+            showToast('Failed to create product: ' + error.message, 'error')
         } finally {
             setLoading(false)
         }

@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { ProductForm, ProductFormData } from '@/components/admin/ProductForm'
 import { Product } from '@/types'
+import { useToast } from '@/context/ToastContext'
 
 export default function EditProductPage() {
     const router = useRouter()
@@ -14,6 +15,7 @@ export default function EditProductPage() {
     const [loading, setLoading] = useState(false)
     const [initialData, setInitialData] = useState<Product | undefined>(undefined)
     const [fetching, setFetching] = useState(true)
+    const { showToast } = useToast()
 
     useEffect(() => {
         fetchProduct()
@@ -41,7 +43,7 @@ export default function EditProductPage() {
             setInitialData(productWithImages)
         } catch (error) {
             console.error('Error fetching product:', error)
-            alert('Failed to fetch product')
+            showToast('Failed to fetch product', 'error')
             router.push('/admin/products')
         } finally {
             setFetching(false)
@@ -109,11 +111,12 @@ export default function EditProductPage() {
                 }
             }
 
+            showToast('Product updated successfully', 'success')
             router.push('/admin/products')
             router.refresh()
         } catch (error: any) {
             console.error('Error updating product:', error)
-            alert('Failed to update product: ' + error.message)
+            showToast('Failed to update product: ' + error.message, 'error')
         } finally {
             setLoading(false)
         }
@@ -135,8 +138,11 @@ export default function EditProductPage() {
             // For now, we just remove the reference from DB which hides it.
             // Garbage collection of storage can be a separate task.
 
-        } catch (error) {
+            showToast('Image deleted successfully. Update product to save changes.', 'success')
+
+        } catch (error: any) {
             console.error('Error deleting image:', error)
+            showToast('Failed to delete image', 'error')
             throw error // Propagate to component to handle state update or alert
         }
     }

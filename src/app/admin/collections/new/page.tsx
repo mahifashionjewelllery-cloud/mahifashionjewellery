@@ -6,10 +6,12 @@ import { createClient } from '@/lib/supabase'
 import { CollectionForm, CollectionFormData } from '@/components/admin/CollectionForm'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/context/ToastContext'
 
 export default function NewCollectionPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const { showToast } = useToast()
 
     const uploadImage = async (image: File): Promise<string> => {
         const formData = new FormData()
@@ -28,7 +30,7 @@ export default function NewCollectionPage() {
 
     const handleSubmit = async (formData: CollectionFormData, image: File | null) => {
         if (!image) {
-            alert('Please select an image for the collection.')
+            showToast('Please select an image for the collection.', 'error')
             return
         }
 
@@ -51,10 +53,11 @@ export default function NewCollectionPage() {
 
             if (error) throw error
 
+            showToast('Collection created successfully', 'success')
             router.push('/admin/collections')
         } catch (error: any) {
             console.error('Error creating collection:', error)
-            alert('Failed to create collection: ' + error.message)
+            showToast('Failed to create collection: ' + error.message, 'error')
         } finally {
             setLoading(false)
         }

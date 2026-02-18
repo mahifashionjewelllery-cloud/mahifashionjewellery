@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase'
 import { CollectionForm, CollectionFormData } from '@/components/admin/CollectionForm'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/context/ToastContext'
 
 interface Collection extends CollectionFormData {
     id: string
@@ -18,6 +19,7 @@ export default function EditCollectionPage({ params }: { params: Promise<{ id: s
     const [loading, setLoading] = useState(false)
     const [fetching, setFetching] = useState(true)
     const [initialData, setInitialData] = useState<Collection | undefined>(undefined)
+    const { showToast } = useToast()
 
     useEffect(() => {
         fetchCollection()
@@ -36,7 +38,7 @@ export default function EditCollectionPage({ params }: { params: Promise<{ id: s
             setInitialData(data)
         } catch (error) {
             console.error('Error fetching collection:', error)
-            alert('Failed to load collection')
+            showToast('Failed to load collection', 'error')
             router.push('/admin/collections')
         } finally {
             setFetching(false)
@@ -83,10 +85,11 @@ export default function EditCollectionPage({ params }: { params: Promise<{ id: s
 
             if (error) throw error
 
+            showToast('Collection updated successfully', 'success')
             router.push('/admin/collections')
         } catch (error: any) {
             console.error('Error updating collection:', error)
-            alert('Failed to update collection: ' + error.message)
+            showToast('Failed to update collection: ' + error.message, 'error')
         } finally {
             setLoading(false)
         }

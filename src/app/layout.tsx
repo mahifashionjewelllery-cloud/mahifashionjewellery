@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   },
 }
 
+import { ToastProvider } from '@/context/ToastContext'
+
 export default function RootLayout({
   children,
 }: {
@@ -35,12 +37,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(playfair.variable, lato.variable)}>
       <body className="font-sans antialiased min-h-screen flex flex-col bg-background text-foreground">
-        <MetalRateTicker />
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+        <ToastProvider>
+          <MetalRateTicker />
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   )

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input' // Keep import if needed, though we use native input below
 import { Loader2, TrendingUp, RefreshCw } from 'lucide-react'
 import { MetalRate } from '@/types'
+import { useToast } from '@/context/ToastContext'
 
 // Mock initial data matching new schema
 export default function MetalRatesPage() {
@@ -14,18 +15,11 @@ export default function MetalRatesPage() {
     const [updating, setUpdating] = useState<string | null>(null)
     const [showAddModal, setShowAddModal] = useState(false)
     const [newRateData, setNewRateData] = useState({ metal_type: 'gold', purity: '', rate_per_gram: '' })
-    const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
+    const { showToast } = useToast()
 
     useEffect(() => {
         fetchRates()
     }, [])
-
-    useEffect(() => {
-        if (toast) {
-            const timer = setTimeout(() => setToast(null), 3000)
-            return () => clearTimeout(timer)
-        }
-    }, [toast])
 
     const fetchRates = async () => {
         try {
@@ -43,9 +37,7 @@ export default function MetalRatesPage() {
         }
     }
 
-    const showToast = (message: string, type: 'success' | 'error') => {
-        setToast({ message, type })
-    }
+
 
     const handleUpdate = async (id: string, newRate: number) => {
         setUpdating(id)
@@ -107,24 +99,7 @@ export default function MetalRatesPage() {
     return (
         <div className="relative">
             {/* Custom Toast */}
-            {toast && (
-                <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-xl text-white transform transition-all duration-300 ease-in-out flex items-center ${toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
-                    }`}>
-                    {toast.type === 'success' ? (
-                        <div className="mr-3 bg-white/20 rounded-full p-1">
-                            <TrendingUp className="h-4 w-4" />
-                        </div>
-                    ) : (
-                        <div className="mr-3 bg-white/20 rounded-full p-1">
-                            <span className="text-sm font-bold">!</span>
-                        </div>
-                    )}
-                    <div>
-                        <h4 className="font-semibold text-sm">{toast.type === 'success' ? 'Success' : 'Error'}</h4>
-                        <p className="text-sm opacity-90">{toast.message}</p>
-                    </div>
-                </div>
-            )}
+
 
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-semibold text-gray-900">Manage Metal Rates</h1>
