@@ -14,6 +14,7 @@ export function Navbar() {
     const router = useRouter()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
+    const [userName, setUserName] = useState<string | null>(null)
     const [user, setUser] = useState<any>(null)
     const cartItems = useCartStore((state) => state.items)
     const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0)
@@ -22,14 +23,46 @@ export function Navbar() {
     useEffect(() => {
         const supabase = createClient()
 
+        const fetchProfile = async (userId: string) => {
+            const { data } = await supabase
+                .from('profiles')
+                .select('full_name')
+                .eq('id', userId)
+                .single()
+
+            if (data?.full_name) {
+                setUserName(data.full_name)
+            }
+        }
+
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null)
+            const currentUser = session?.user ?? null
+            setUser(currentUser)
+            if (currentUser) {
+                // Check metadata first for immediate display
+                if (currentUser.user_metadata?.full_name) {
+                    setUserName(currentUser.user_metadata.full_name)
+                }
+                // Then fetch from profile to be sure
+                fetchProfile(currentUser.id)
+            } else {
+                setUserName(null)
+            }
         })
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null)
+            const currentUser = session?.user ?? null
+            setUser(currentUser)
+            if (currentUser) {
+                if (currentUser.user_metadata?.full_name) {
+                    setUserName(currentUser.user_metadata.full_name)
+                }
+                fetchProfile(currentUser.id)
+            } else {
+                setUserName(null)
+            }
         })
 
         return () => subscription.unsubscribe()
@@ -113,7 +146,7 @@ export function Navbar() {
                             <div className="relative group">
                                 <button className="text-foreground/80 hover:text-accent transition-colors p-2 flex items-center gap-2">
                                     <User className="h-5 w-5" />
-                                    <span className="text-sm hidden lg:inline">{user.email?.split('@')[0]}</span>
+                                    <span className="text-sm hidden lg:inline capitalize">{userName || user.email?.split('@')[0]}</span>
                                 </button>
                                 <div className="absolute right-0 mt-2 w-48 bg-background border border-white/10 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                     <Link href="/orders" className="block px-4 py-2 text-sm text-foreground/80 hover:bg-white/5 hover:text-accent">
@@ -196,7 +229,7 @@ export function Navbar() {
                             {user ? (
                                 <>
                                     <div className="px-3 py-2 text-sm text-foreground/60">
-                                        {user.email}
+                                        {userName || user.email}
                                     </div>
                                     <Link
                                         href="/orders"
