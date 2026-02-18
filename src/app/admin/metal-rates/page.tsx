@@ -147,7 +147,7 @@ export default function MetalRatesPage() {
                     <span className="text-xs text-emerald-200/60 font-mono">Last Updated: {new Date().toLocaleTimeString()}</span>
                 </div>
 
-                <div className="p-0">
+                <div className="p-0 overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
