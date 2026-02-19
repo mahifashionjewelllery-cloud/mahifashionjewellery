@@ -11,11 +11,17 @@ import { useState } from 'react'
 
 import { useMetalRatesStore } from '@/store/metalRatesStore'
 
+import { createClient } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/context/ToastContext'
+
 interface ProductCardProps {
     product: Product
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+    const router = useRouter()
+    const { showToast } = useToast()
     const addToCart = useCartStore((state) => state.addItem)
     const { getRate } = useMetalRatesStore()
     const [isAdding, setIsAdding] = useState(false)
@@ -25,8 +31,18 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const priceDetails = calculateProductPrice(product, currentRate)
 
-    const handleAddToCart = (e: React.MouseEvent) => {
+    const handleAddToCart = async (e: React.MouseEvent) => {
         e.preventDefault()
+
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+            showToast('Please login to add items to cart', 'error')
+            router.push('/login')
+            return
+        }
+
         setIsAdding(true)
         addToCart(product, priceDetails.total)
 

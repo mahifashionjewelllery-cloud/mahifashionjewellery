@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/Button'
 import { ShoppingBag, Star, HelpCircle, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/context/ToastContext'
 
 export default function ProductDetailPage() {
     const params = useParams()
@@ -84,7 +86,19 @@ export default function ProductDetailPage() {
     const metalRate = getRate(product.metal_type, product.purity)
     const priceDetails = calculateProductPrice(product, metalRate)
 
-    const handleAddToCart = () => {
+    const router = useRouter()
+    const { showToast } = useToast()
+
+    const handleAddToCart = async () => {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+            showToast('Please login to add items to cart', 'error')
+            router.push('/login')
+            return
+        }
+
         setIsAdding(true)
         addToCart(product, priceDetails.total)
         setTimeout(() => setIsAdding(false), 500)
